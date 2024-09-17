@@ -5,8 +5,11 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnet_ids" "default" {
-  vpc_id = local.vpc_id
+data "aws_subnets" "default" {
+  filter {
+    name = "vpc-id"
+    values = [local.vpc_id]
+  }
 }
 
 data "aws_caller_identity" "aws" {}
@@ -223,7 +226,7 @@ module "ec2_minecraft" {
 
   # network
   subnet_id                   = local.subnet_id
-  vpc_security_group_ids      = [ module.ec2_security_group.this_security_group_id ]
+  vpc_security_group_ids      = [ module.ec2_security_group.id ]
   associate_public_ip_address = var.associate_public_ip_address
 
   tags = module.label.tags
